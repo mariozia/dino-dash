@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Dino Dash</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="app">
+  <canvas id="game-canvas"></canvas>
+
+  <!-- HUD shown during play -->
+  <div id="hud" class="hidden">
+    <div id="score">0</div>
+  </div>
+
+  <!-- Start screen -->
+  <div id="screen-start" class="screen">
+    <h1 class="title">DINO DASH</h1>
+    <p class="subtitle">Glide your raptor through a meteor storm</p>
+    <div class="menu-buttons">
+      <button id="btn-play" class="btn btn-primary">Play</button>
+      <button id="btn-store" class="btn">Store</button>
+    </div>
+    <p class="hint">Tap, click, or press Space to flap</p>
+  </div>
+
+  <!-- Game over screen -->
+  <div id="screen-gameover" class="screen hidden">
+    <h2 class="title small">EXTINCT!</h2>
+    <div class="stat-row">
+      <div class="stat"><span class="stat-label">Score</span><span id="final-score" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">Best</span><span id="best-score" class="stat-value">0</span></div>
+    </div>
+    <div class="menu-buttons">
+      <button id="btn-retry" class="btn btn-primary">Retry</button>
+      <button id="btn-menu" class="btn">Menu</button>
+    </div>
+  </div>
+
+  <!-- Store screen -->
+  <div id="screen-store" class="screen hidden">
+    <div class="store-header">
+      <button id="btn-store-back" class="btn btn-icon">&larr;</button>
+      <h2 class="title small">DINO STORE</h2>
+      <div class="store-spacer"></div>
+    </div>
+    <p class="store-note">Skins are cosmetic only &mdash; every dino plays exactly the same. Purchases here are a local demo, no real payment is processed.</p>
+    <div id="store-grid" class="store-grid"></div>
+  </div>
+
+  <!-- Purchase confirm modal -->
+  <div id="modal-buy" class="modal hidden">
+    <div class="modal-card">
+      <h3 id="modal-buy-title">Buy character</h3>
+      <p id="modal-buy-desc"></p>
+      <div class="menu-buttons">
+        <button id="btn-buy-confirm" class="btn btn-primary">Confirm purchase</button>
+        <button id="btn-buy-cancel" class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/characters.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/art.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/game.js"></script>
+<script src="js/store.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
