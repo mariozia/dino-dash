@@ -134,7 +134,7 @@ class Game {
   draw() {
     const { ctx, width: w, height: h } = this;
     drawBackground(ctx, w, h, this.scrollX);
-    for (const m of this.meteors) m.draw(ctx, this.groundY);
+    for (const m of this.meteors) m.draw(ctx, this.groundY, h);
     this.player.draw(ctx, this.t);
   }
 

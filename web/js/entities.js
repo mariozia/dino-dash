@@ -106,11 +106,15 @@ class MeteorPair {
     return { x: this.x, y: top, w: this.width, h: groundY - top };
   }
 
-  draw(ctx, groundY) {
+  draw(ctx, groundY, canvasHeight) {
     const top = this.topRect(groundY);
     const bot = this.bottomRect(groundY);
     drawMeteor(ctx, top.x, top.y, top.w, top.h, true);
-    drawMeteor(ctx, bot.x, bot.y, bot.w, bot.h, false);
+    // the hitbox still stops at groundY (the actual floor), but the rock is
+    // drawn further down to the real screen edge so it doesn't float with a
+    // gap underneath now that there's no separate ground strip to hide it.
+    const bottomDrawH = canvasHeight - bot.y;
+    drawMeteor(ctx, bot.x, bot.y, bot.w, bottomDrawH, false);
   }
 }
 
