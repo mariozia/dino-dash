@@ -10,7 +10,7 @@ const CHARACTERS = [
     price: 0,
     starter: true,
     features: ["wings"],
-    palette: { body: "#d97a3a", belly: "#ffe2b8", accent: "#8a431a", eye: "#1a1a1a", wing: "#ffb35c" },
+    palette: { body: "#3a5fd9", belly: "#cfe2ff", accent: "#1a3a8a", eye: "#ffd166", wing: "#7fb8ff" },
   },
   {
     id: "compy",
