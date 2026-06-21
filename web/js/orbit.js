@@ -93,6 +93,14 @@ async function getAdminPlayers() {
   return res.json();
 }
 
+async function getTournamentScores(tournamentId) {
+  var supabaseUrl = 'https://eqjsmfegpwuakpsepryj.supabase.co';
+  var res = await fetch(supabaseUrl + '/rest/v1/tournament_entries?tournament_id=eq.' + tournamentId + '&select=player_name,best_score&order=best_score.desc&limit=50', {
+    headers: { 'apikey': ORBIT_ANON_KEY, 'Authorization': 'Bearer ' + ORBIT_ANON_KEY },
+  });
+  return res.json();
+}
+
 async function submitScore(email, tournamentId, score) {
   const res = await fetch(`${ORBIT_URL}/dino-submit-score`, {
     method: 'POST',

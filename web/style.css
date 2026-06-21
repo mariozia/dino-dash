@@ -462,6 +462,50 @@ html, body {
   padding: 10px 24px;
 }
 
+.t-leaderboard {
+  margin-top: 8px;
+  border-top: 1px solid rgba(76,175,80,0.2);
+  padding-top: 8px;
+}
+
+.t-lb-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4CAF50;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.t-lb-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 13px;
+  color: #cfe0c8;
+}
+
+.t-lb-row:first-of-type { color: #ffd166; font-weight: 700; }
+
+.t-lb-me {
+  background: rgba(76,175,80,0.15);
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin: 0 -6px;
+}
+
+.t-lb-rank { width: 28px; flex-shrink: 0; }
+.t-lb-name { flex: 1; }
+.t-lb-score { font-weight: 700; color: #ffd166; }
+
+.t-lb-empty {
+  font-size: 12px;
+  color: #9db89a;
+  text-align: center;
+  padding: 8px 0;
+  font-style: italic;
+}
+
 .t-no-tournaments {
   text-align: center;
   color: #9db89a;

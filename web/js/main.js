@@ -418,6 +418,7 @@
           '</div>' +
           (prizes ? '<div class="t-card-prizes">' + prizes + '</div>' : '') +
           '<div class="t-card-time">' + timeLabel + '</div>' +
+          '<div class="t-leaderboard" id="lb-' + tr.id + '"></div>' +
           (isActive ? '<button class="btn btn-primary t-enter-btn">' + t("tournamentsPlay") + '</button>' : '');
         if (isActive) {
           card.querySelector(".t-enter-btn").onclick = function() {
@@ -433,6 +434,25 @@
           };
         }
         list.appendChild(card);
+        getTournamentScores(tr.id).then(function(scores) {
+          var lb = document.getElementById("lb-" + tr.id);
+          if (!lb) return;
+          if (!scores || !scores.length) {
+            lb.innerHTML = '<div class="t-lb-empty">' + t("tournamentsNoScores") + '</div>';
+            return;
+          }
+          var html = '<div class="t-lb-title">' + t("tournamentsLeaderboard") + '</div>';
+          scores.forEach(function(s, i) {
+            var medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : (i + 1) + ".";
+            var isMe = session && s.player_name && session.name && s.player_name.toLowerCase() === session.name.toLowerCase();
+            html += '<div class="t-lb-row' + (isMe ? ' t-lb-me' : '') + '">' +
+              '<span class="t-lb-rank">' + medal + '</span>' +
+              '<span class="t-lb-name">' + (s.player_name || 'Player') + '</span>' +
+              '<span class="t-lb-score">' + (s.best_score || 0) + '</span>' +
+            '</div>';
+          });
+          lb.innerHTML = html;
+        });
       });
     } catch (e) {
       list.innerHTML = '<p class="error-text">' + t("tournamentsFail") + '</p>';
