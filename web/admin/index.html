@@ -320,7 +320,7 @@ async function loadSection(section) {
       }
       // Fetch entries for all tournaments
       var tIds = tournaments.map(function(t) { return t.id; });
-      var entriesRes = await fetch(ORBIT_URL + '/rest/v1/tournament_entries?tournament_id=in.(' + tIds.join(',') + ')&select=tournament_id,display_name,score&order=score.desc', {
+      var entriesRes = await fetch(ORBIT_URL + '/rest/v1/tournament_entries?tournament_id=in.(' + tIds.join(',') + ')&select=tournament_id,player_name,best_score,score&order=best_score.desc', {
         headers: { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
       });
       var allEntries = await entriesRes.json();
@@ -341,7 +341,7 @@ async function loadSection(section) {
             '<div style="font-size:12px;color:#58a6ff;margin-bottom:4px;">Scores (' + entries.length + ')</div>';
           entries.forEach(function(e, i) {
             scoresHtml += '<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:' + (i === 0 ? '#ffd166' : '#c9d1d9') + ';">' +
-              '<span>' + (i+1) + '. ' + (e.display_name || 'Player') + '</span><span>' + e.score + '</span></div>';
+              '<span>' + (i+1) + '. ' + (e.player_name || 'Player') + '</span><span>' + (e.best_score || e.score) + '</span></div>';
           });
           scoresHtml += '</div>';
         }
