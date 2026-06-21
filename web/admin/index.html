@@ -318,6 +318,14 @@ async function loadSection(section) {
         content.innerHTML = '<p class="empty-state">No ' + section + ' tournaments</p>';
         return;
       }
+      // Fetch entries for all tournaments
+      var tIds = tournaments.map(function(t) { return t.id; });
+      var entriesRes = await fetch(ORBIT_URL + '/rest/v1/tournament_entries?tournament_id=in.(' + tIds.join(',') + ')&select=tournament_id,display_name,score&order=score.desc', {
+        headers: { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
+      });
+      var allEntries = await entriesRes.json();
+      if (!Array.isArray(allEntries)) allEntries = [];
+
       var html = '<div class="card-list">';
       tournaments.forEach(function(t) {
         var badgeClass = section === 'live' ? 'badge-live' : section === 'upcoming' ? 'badge-upcoming' : 'badge-ended';
@@ -326,13 +334,25 @@ async function loadSection(section) {
         if (t.prize_pool) {
           prizes = Object.entries(t.prize_pool).map(function(e) { return e[0] + ': ' + e[1] + ' ⭐'; }).join(' | ');
         }
+        var entries = allEntries.filter(function(e) { return e.tournament_id === t.id; });
+        var scoresHtml = '';
+        if (entries.length) {
+          scoresHtml = '<div style="margin-top:8px;border-top:1px solid #1e2a3a;padding-top:8px;">' +
+            '<div style="font-size:12px;color:#58a6ff;margin-bottom:4px;">Scores (' + entries.length + ')</div>';
+          entries.forEach(function(e, i) {
+            scoresHtml += '<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:' + (i === 0 ? '#ffd166' : '#c9d1d9') + ';">' +
+              '<span>' + (i+1) + '. ' + (e.display_name || 'Player') + '</span><span>' + e.score + '</span></div>';
+          });
+          scoresHtml += '</div>';
+        }
         html += '<div class="card">' +
           '<div class="card-top"><span class="card-name">' + t.name + '</span><span class="badge ' + badgeClass + '">' + badgeText + '</span></div>' +
           '<div class="card-row">Starts: <strong>' + new Date(t.starts_at).toLocaleString() + '</strong></div>' +
           '<div class="card-row">Ends: <strong>' + new Date(t.ends_at).toLocaleString() + '</strong></div>' +
-          '<div class="card-row">Participants: <strong>' + (t.max_participants || '—') + '</strong></div>' +
+          '<div class="card-row">Participants: <strong>' + entries.length + ' / ' + (t.max_participants || '∞') + '</strong></div>' +
           (t.invite_code ? '<div class="card-row">Code: <strong>' + t.invite_code + '</strong></div>' : '') +
           (prizes ? '<div class="card-prizes">' + prizes + '</div>' : '') +
+          scoresHtml +
           '</div>';
       });
       html += '</div>';
