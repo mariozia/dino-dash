@@ -16,19 +16,52 @@
     <div id="hud-tournament" class="hidden"></div>
   </div>
 
-  <!-- Login screen -->
+  <!-- Step 1: Email -->
   <div id="screen-login" class="screen">
     <h1 class="title">DINO DASH</h1>
     <p class="subtitle">Enter your ZiaRocks email to play</p>
     <div class="login-form">
-      <input type="email" id="login-email" class="input-email" placeholder="you@email.com" autocomplete="email" />
-      <button id="btn-login" class="btn btn-primary">Enter</button>
+      <input type="email" id="login-email" class="input-field" placeholder="you@email.com" autocomplete="email" />
+      <button id="btn-check-email" class="btn btn-primary">Next</button>
     </div>
     <p id="login-error" class="error-text hidden"></p>
     <p class="hint">You need an active ZiaRocks subscription</p>
   </div>
 
-  <!-- Start screen -->
+  <!-- Step 2a: Create password (first time) -->
+  <div id="screen-create-password" class="screen hidden">
+    <h1 class="title small">CREATE PASSWORD</h1>
+    <p id="create-pw-email" class="subtitle"></p>
+    <div class="password-form">
+      <input type="password" id="create-pw-input" class="input-field" placeholder="Create a password (min 6 chars)" />
+      <input type="password" id="create-pw-confirm" class="input-field" placeholder="Confirm password" />
+      <button id="btn-create-pw" class="btn btn-primary btn-full">Create Account</button>
+    </div>
+    <p id="create-pw-error" class="error-text hidden"></p>
+    <button id="btn-create-pw-back" class="btn-link">&larr; Use a different email</button>
+  </div>
+
+  <!-- Step 2b: Login with password (returning user) -->
+  <div id="screen-password" class="screen hidden">
+    <h1 class="title small">WELCOME BACK</h1>
+    <p id="login-pw-email" class="subtitle"></p>
+    <div class="password-form">
+      <input type="password" id="login-pw-input" class="input-field" placeholder="Enter your password" />
+      <button id="btn-login-pw" class="btn btn-primary btn-full">Log In</button>
+    </div>
+    <p id="login-pw-error" class="error-text hidden"></p>
+    <button id="btn-forgot-pw" class="btn-link">Forgot password?</button>
+    <button id="btn-login-pw-back" class="btn-link">&larr; Use a different email</button>
+  </div>
+
+  <!-- Forgot password confirmation -->
+  <div id="screen-forgot" class="screen hidden">
+    <h1 class="title small">CHECK YOUR EMAIL</h1>
+    <p id="forgot-msg" class="subtitle">A password reset link has been sent to your email.</p>
+    <button id="btn-forgot-back" class="btn btn-primary">Back to Login</button>
+  </div>
+
+  <!-- Start screen (main menu) -->
   <div id="screen-start" class="screen hidden">
     <h1 class="title">DINO DASH</h1>
     <p id="welcome-name" class="subtitle"></p>

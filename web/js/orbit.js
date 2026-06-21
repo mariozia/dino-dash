@@ -14,11 +14,38 @@ function clearSession() {
   localStorage.removeItem(SESSION_KEY);
 }
 
-async function verifyAccess(email) {
-  const res = await fetch(`${ORBIT_URL}/dino-verify-access`, {
+async function checkUserStatus(email) {
+  const res = await fetch(`${ORBIT_URL}/check-user-status`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-dino-api-key': DINO_API_KEY },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email.trim().toLowerCase() }),
+  });
+  return res.json();
+}
+
+async function createPassword(email, password) {
+  const res = await fetch(`${ORBIT_URL}/create-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+  });
+  return res.json();
+}
+
+async function loginWithPassword(email, password) {
+  const res = await fetch(`${ORBIT_URL}/login-with-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+  });
+  return res.json();
+}
+
+async function forgotPassword(email) {
+  const res = await fetch(`${ORBIT_URL}/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email.trim().toLowerCase(), language: 'en' }),
   });
   return res.json();
 }

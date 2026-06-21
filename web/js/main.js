@@ -6,6 +6,9 @@
 
   const screens = {
     login: document.getElementById("screen-login"),
+    createPassword: document.getElementById("screen-create-password"),
+    password: document.getElementById("screen-password"),
+    forgot: document.getElementById("screen-forgot"),
     start: document.getElementById("screen-start"),
     gameover: document.getElementById("screen-gameover"),
     tournamentOver: document.getElementById("screen-tournament-over"),
@@ -18,49 +21,153 @@
 
   let session = getSession();
   let activeTournament = null;
+  let pendingEmail = "";
 
   function showScreen(name) {
     Object.values(screens).forEach((el) => el.classList.add("hidden"));
     if (name && screens[name]) screens[name].classList.remove("hidden");
   }
 
-  // --- Login ---
-  const loginEmail = document.getElementById("login-email");
-  const loginError = document.getElementById("login-error");
-  const btnLogin = document.getElementById("btn-login");
+  function setLoading(btn, loading, originalText) {
+    btn.disabled = loading;
+    btn.textContent = loading ? "Loading..." : originalText;
+  }
 
-  async function doLogin() {
-    const email = loginEmail.value.trim();
+  // ── Step 1: Email check ──
+  const emailInput = document.getElementById("login-email");
+  const loginError = document.getElementById("login-error");
+  const btnCheckEmail = document.getElementById("btn-check-email");
+
+  async function doCheckEmail() {
+    const email = emailInput.value.trim();
     if (!email) return;
-    btnLogin.disabled = true;
-    btnLogin.textContent = "Verifying...";
     loginError.classList.add("hidden");
+    setLoading(btnCheckEmail, true, "Next");
     try {
-      const res = await verifyAccess(email);
-      if (res.allowed) {
-        session = { email, name: res.name, user_id: res.user_id, monthsActive: res.monthsActive };
-        saveSession(session);
-        goMenu();
-      } else {
-        loginError.textContent = res.reason === "user_not_found"
-          ? "Email not found in ZiaRocks"
-          : res.reason === "no_active_subscription"
-          ? "No active subscription"
-          : "Access denied: " + (res.reason || "unknown");
+      const res = await checkUserStatus(email);
+      if (!res.isActive) {
+        loginError.textContent = res.error === "Failed to verify membership"
+          ? "Could not verify. Try again."
+          : "No active ZiaRocks subscription found.";
         loginError.classList.remove("hidden");
+        setLoading(btnCheckEmail, false, "Next");
+        return;
+      }
+      pendingEmail = email;
+      if (res.exists && res.hasPassword) {
+        document.getElementById("login-pw-email").textContent = email;
+        document.getElementById("login-pw-input").value = "";
+        document.getElementById("login-pw-error").classList.add("hidden");
+        showScreen("password");
+      } else {
+        document.getElementById("create-pw-email").textContent = email;
+        document.getElementById("create-pw-input").value = "";
+        document.getElementById("create-pw-confirm").value = "";
+        document.getElementById("create-pw-error").classList.add("hidden");
+        showScreen("createPassword");
       }
     } catch (e) {
       loginError.textContent = "Connection error. Try again.";
       loginError.classList.remove("hidden");
     }
-    btnLogin.disabled = false;
-    btnLogin.textContent = "Enter";
+    setLoading(btnCheckEmail, false, "Next");
   }
 
-  btnLogin.onclick = doLogin;
-  loginEmail.addEventListener("keydown", (e) => { if (e.key === "Enter") doLogin(); });
+  btnCheckEmail.onclick = doCheckEmail;
+  emailInput.addEventListener("keydown", (e) => { if (e.key === "Enter") doCheckEmail(); });
 
-  // --- Menu ---
+  // ── Step 2a: Create password ──
+  const createPwInput = document.getElementById("create-pw-input");
+  const createPwConfirm = document.getElementById("create-pw-confirm");
+  const createPwError = document.getElementById("create-pw-error");
+  const btnCreatePw = document.getElementById("btn-create-pw");
+
+  async function doCreatePassword() {
+    const pw = createPwInput.value;
+    const pw2 = createPwConfirm.value;
+    createPwError.classList.add("hidden");
+    if (!pw || pw.length < 6) {
+      createPwError.textContent = "Password must be at least 6 characters.";
+      createPwError.classList.remove("hidden");
+      return;
+    }
+    if (pw !== pw2) {
+      createPwError.textContent = "Passwords don't match.";
+      createPwError.classList.remove("hidden");
+      return;
+    }
+    setLoading(btnCreatePw, true, "Create Account");
+    try {
+      const res = await createPassword(pendingEmail, pw);
+      if (res.success) {
+        const loginRes = await loginWithPassword(pendingEmail, pw);
+        if (loginRes.success) {
+          session = { email: pendingEmail, name: loginRes.user?.display_name || pendingEmail.split("@")[0], user: loginRes.user };
+          saveSession(session);
+          goMenu();
+        } else {
+          session = { email: pendingEmail, name: pendingEmail.split("@")[0] };
+          saveSession(session);
+          goMenu();
+        }
+      } else {
+        createPwError.textContent = res.error || "Failed to create account.";
+        createPwError.classList.remove("hidden");
+      }
+    } catch (e) {
+      createPwError.textContent = "Connection error. Try again.";
+      createPwError.classList.remove("hidden");
+    }
+    setLoading(btnCreatePw, false, "Create Account");
+  }
+
+  btnCreatePw.onclick = doCreatePassword;
+  createPwConfirm.addEventListener("keydown", (e) => { if (e.key === "Enter") doCreatePassword(); });
+  document.getElementById("btn-create-pw-back").onclick = () => showScreen("login");
+
+  // ── Step 2b: Login with password ──
+  const loginPwInput = document.getElementById("login-pw-input");
+  const loginPwError = document.getElementById("login-pw-error");
+  const btnLoginPw = document.getElementById("btn-login-pw");
+
+  async function doLogin() {
+    const pw = loginPwInput.value;
+    loginPwError.classList.add("hidden");
+    if (!pw) return;
+    setLoading(btnLoginPw, true, "Log In");
+    try {
+      const res = await loginWithPassword(pendingEmail, pw);
+      if (res.success) {
+        session = { email: pendingEmail, name: res.user?.display_name || pendingEmail.split("@")[0], user: res.user };
+        saveSession(session);
+        goMenu();
+      } else {
+        loginPwError.textContent = res.error || "Invalid password.";
+        loginPwError.classList.remove("hidden");
+      }
+    } catch (e) {
+      loginPwError.textContent = "Connection error. Try again.";
+      loginPwError.classList.remove("hidden");
+    }
+    setLoading(btnLoginPw, false, "Log In");
+  }
+
+  btnLoginPw.onclick = doLogin;
+  loginPwInput.addEventListener("keydown", (e) => { if (e.key === "Enter") doLogin(); });
+  document.getElementById("btn-login-pw-back").onclick = () => showScreen("login");
+
+  // ── Forgot password ──
+  document.getElementById("btn-forgot-pw").onclick = async () => {
+    try {
+      await forgotPassword(pendingEmail);
+    } catch (e) {}
+    document.getElementById("forgot-msg").textContent =
+      "A password reset link has been sent to " + pendingEmail;
+    showScreen("forgot");
+  };
+  document.getElementById("btn-forgot-back").onclick = () => showScreen("login");
+
+  // ── Main menu ──
   function goMenu() {
     game.goIdle();
     hud.classList.add("hidden");
@@ -75,7 +182,7 @@
     }
   }
 
-  // --- Game ---
+  // ── Game ──
   function startGame(tournament) {
     activeTournament = tournament || null;
     showScreen(null);
@@ -92,7 +199,6 @@
   game.onGameOver = async (score) => {
     recordScore(save, score);
     hud.classList.add("hidden");
-
     if (activeTournament) {
       document.getElementById("t-final-score").textContent = score;
       document.getElementById("t-rank").textContent = "-";
@@ -116,7 +222,7 @@
     }
   };
 
-  // --- Tournaments ---
+  // ── Tournaments ──
   async function openTournaments() {
     showScreen("tournaments");
     const list = document.getElementById("tournament-list");
@@ -138,7 +244,7 @@
           ? "Ends: " + new Date(t.ends_at).toLocaleString()
           : "Starts: " + new Date(t.starts_at).toLocaleString();
         const prizes = t.prize_pool
-          ? Object.entries(t.prize_pool).map(([k, v]) => k + ": " + v + " ⭐").join(" | ")
+          ? Object.entries(t.prize_pool).map(function(e) { return e[0] + ": " + e[1] + " ⭐"; }).join(" | ")
           : "";
         card.innerHTML =
           '<div class="t-card-header">' +
@@ -149,7 +255,7 @@
           '<div class="t-card-time">' + timeLabel + '</div>' +
           (isActive ? '<button class="btn btn-primary t-enter-btn">Play</button>' : '');
         if (isActive) {
-          card.querySelector(".t-enter-btn").onclick = () => startGame(t);
+          card.querySelector(".t-enter-btn").onclick = function() { startGame(t); };
         }
         list.appendChild(card);
       });
@@ -158,52 +264,53 @@
     }
   }
 
-  // --- Store ---
+  // ── Store ──
   function openStore() {
     showScreen("store");
-    const refresh = () => {
+    var refresh = function() {
       game.setCharacter(getCharacter(save.equipped));
       renderStore(save, refresh);
     };
     renderStore(save, refresh);
   }
 
-  // --- Logout ---
+  // ── Logout ──
   function doLogout() {
     clearSession();
     session = null;
+    pendingEmail = "";
+    emailInput.value = "";
     showScreen("login");
-    loginEmail.value = "";
   }
 
-  // --- Buttons ---
-  document.getElementById("btn-play").onclick = () => startGame(null);
-  document.getElementById("btn-retry").onclick = () => startGame(null);
+  // ── Button bindings ──
+  document.getElementById("btn-play").onclick = function() { startGame(null); };
+  document.getElementById("btn-retry").onclick = function() { startGame(null); };
   document.getElementById("btn-menu").onclick = goMenu;
   document.getElementById("btn-tournaments").onclick = openTournaments;
   document.getElementById("btn-tournaments-back").onclick = goMenu;
   document.getElementById("btn-store").onclick = openStore;
   document.getElementById("btn-store-back").onclick = goMenu;
   document.getElementById("btn-logout").onclick = doLogout;
-  document.getElementById("btn-t-retry").onclick = () => startGame(activeTournament);
+  document.getElementById("btn-t-retry").onclick = function() { startGame(activeTournament); };
   document.getElementById("btn-t-menu").onclick = goMenu;
 
-  // --- HUD sync ---
-  setInterval(() => {
+  // ── HUD sync ──
+  setInterval(function() {
     if (!hud.classList.contains("hidden")) scoreEl.textContent = game.score;
   }, 50);
 
-  // --- Input ---
+  // ── Input ──
   function flapInput(e) {
     if (e) e.preventDefault();
     game.flap();
   }
   canvas.addEventListener("pointerdown", flapInput);
-  window.addEventListener("keydown", (e) => {
+  window.addEventListener("keydown", function(e) {
     if (e.code === "Space") flapInput(e);
   });
 
-  // --- Init ---
+  // ── Init ──
   if (session) {
     goMenu();
   } else {

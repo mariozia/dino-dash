@@ -231,7 +231,7 @@ html, body {
   margin-top: 8px;
 }
 
-.input-email {
+.input-field {
   flex: 1;
   font-family: inherit;
   font-size: 15px;
@@ -241,9 +241,22 @@ html, body {
   background: rgba(20,32,22,0.8);
   color: #f4ecd8;
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.input-email:focus { border-color: #ffd166; }
+.input-field:focus { border-color: #ffd166; }
+
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 340px;
+  margin-top: 8px;
+}
+
+.btn-full { width: 100%; }
 
 .error-text {
   color: #ff6b6b;
