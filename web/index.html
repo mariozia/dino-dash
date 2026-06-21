@@ -10,6 +10,12 @@
 <div id="app">
   <canvas id="game-canvas"></canvas>
 
+  <!-- Language selector (top-right, always visible on screens) -->
+  <div id="lang-picker" class="lang-picker">
+    <button id="btn-lang" class="btn-lang">EN ▾</button>
+    <div id="lang-dropdown" class="lang-dropdown hidden"></div>
+  </div>
+
   <!-- HUD shown during play -->
   <div id="hud" class="hidden">
     <div id="score">0</div>
@@ -18,88 +24,104 @@
 
   <!-- Step 1: Email -->
   <div id="screen-login" class="screen">
-    <h1 class="title">DINO DASH</h1>
-    <p class="subtitle">Enter your ZiaRocks email to play</p>
+    <h1 class="title" data-i18n="loginTitle">DINO DASH</h1>
+    <p class="subtitle" data-i18n="loginSubtitle">Enter your ZiaRocks email to play</p>
     <div class="login-form">
-      <input type="email" id="login-email" class="input-field" placeholder="you@email.com" autocomplete="email" />
-      <button id="btn-check-email" class="btn btn-primary">Next</button>
+      <input type="email" id="login-email" class="input-field" data-i18n-placeholder="loginPlaceholder" placeholder="you@email.com" autocomplete="email" />
+      <button id="btn-check-email" class="btn btn-primary" data-i18n="loginNext">Next</button>
     </div>
     <p id="login-error" class="error-text hidden"></p>
-    <p class="hint">You need an active ZiaRocks subscription</p>
+    <p class="hint" data-i18n="loginHint">You need an active ZiaRocks subscription</p>
   </div>
 
   <!-- Step 2a: Create password (first time) -->
   <div id="screen-create-password" class="screen hidden">
-    <h1 class="title small">CREATE PASSWORD</h1>
+    <h1 class="title small" data-i18n="createPwTitle">CREATE PASSWORD</h1>
     <p id="create-pw-email" class="subtitle"></p>
     <div class="password-form">
       <div class="input-wrap">
-        <input type="password" id="create-pw-input" class="input-field" placeholder="Create a password (min 6 chars)" />
+        <input type="password" id="create-pw-input" class="input-field" data-i18n-placeholder="createPwPlaceholder" placeholder="Create a password (min 6 chars)" />
         <button type="button" class="btn-eye" data-target="create-pw-input">👁</button>
       </div>
       <div class="input-wrap">
-        <input type="password" id="create-pw-confirm" class="input-field" placeholder="Confirm password" />
+        <input type="password" id="create-pw-confirm" class="input-field" data-i18n-placeholder="createPwConfirm" placeholder="Confirm password" />
         <button type="button" class="btn-eye" data-target="create-pw-confirm">👁</button>
       </div>
-      <button id="btn-create-pw" class="btn btn-primary btn-full">Create Account</button>
+      <button id="btn-create-pw" class="btn btn-primary btn-full" data-i18n="createPwBtn">Create Account</button>
     </div>
     <p id="create-pw-error" class="error-text hidden"></p>
-    <button id="btn-create-pw-back" class="btn-link">&larr; Use a different email</button>
+    <button id="btn-create-pw-back" class="btn-link" data-i18n="backEmail">&larr; Use a different email</button>
   </div>
 
   <!-- Step 2b: Login with password (returning user) -->
   <div id="screen-password" class="screen hidden">
-    <h1 class="title small">WELCOME BACK</h1>
+    <h1 class="title small" data-i18n="welcomeBack">WELCOME BACK</h1>
     <p id="login-pw-email" class="subtitle"></p>
     <div class="password-form">
       <div class="input-wrap">
-        <input type="password" id="login-pw-input" class="input-field" placeholder="Enter your password" />
+        <input type="password" id="login-pw-input" class="input-field" data-i18n-placeholder="loginPwPlaceholder" placeholder="Enter your password" />
         <button type="button" class="btn-eye" data-target="login-pw-input">👁</button>
       </div>
-      <button id="btn-login-pw" class="btn btn-primary btn-full">Log In</button>
+      <button id="btn-login-pw" class="btn btn-primary btn-full" data-i18n="loginPwBtn">Log In</button>
     </div>
     <p id="login-pw-error" class="error-text hidden"></p>
-    <button id="btn-forgot-pw" class="btn-link">Forgot password?</button>
-    <button id="btn-login-pw-back" class="btn-link">&larr; Use a different email</button>
+    <button id="btn-forgot-pw" class="btn-link" data-i18n="forgotPw">Forgot password?</button>
+    <button id="btn-login-pw-back" class="btn-link" data-i18n="backEmail">&larr; Use a different email</button>
   </div>
 
   <!-- Forgot password confirmation -->
   <div id="screen-forgot" class="screen hidden">
-    <h1 class="title small">CHECK YOUR EMAIL</h1>
-    <p id="forgot-msg" class="subtitle">A password reset link has been sent to your email.</p>
-    <button id="btn-forgot-back" class="btn btn-primary">Back to Login</button>
+    <h1 class="title small" data-i18n="forgotTitle">CHECK YOUR EMAIL</h1>
+    <p id="forgot-msg" class="subtitle" data-i18n="forgotMsg">A password reset link has been sent to your email.</p>
+    <button id="btn-forgot-back" class="btn btn-primary" data-i18n="forgotBack">Back to Login</button>
+  </div>
+
+  <!-- How to play -->
+  <div id="screen-howto" class="screen hidden">
+    <h1 class="title small" data-i18n="howToPlayTitle">HOW TO PLAY</h1>
+    <div class="howto-steps">
+      <div class="howto-step"><span class="howto-icon">👆</span><span data-i18n="howToPlay1">Tap the screen, click, or press Space to flap your wings.</span></div>
+      <div class="howto-step"><span class="howto-icon">☄️</span><span data-i18n="howToPlay2">Dodge the meteors falling from the sky.</span></div>
+      <div class="howto-step"><span class="howto-icon">⭐</span><span data-i18n="howToPlay3">Each meteor pair you pass earns you 1 point.</span></div>
+      <div class="howto-step"><span class="howto-icon">💀</span><span data-i18n="howToPlay4">Hit a meteor or the ground and it's game over!</span></div>
+    </div>
+    <p class="howto-tip" data-i18n="howToPlayTip">Tip: Short taps give more control than holding.</p>
+    <div class="menu-buttons">
+      <button id="btn-howto-ok" class="btn btn-primary" data-i18n="howToPlayBtn">Got it!</button>
+      <button id="btn-howto-skip" class="btn" data-i18n="howToPlaySkip">Skip</button>
+    </div>
   </div>
 
   <!-- Start screen (main menu) -->
   <div id="screen-start" class="screen hidden">
     <h1 class="title">DINO DASH</h1>
-    <p class="subtitle">Glide your raptor through a meteor storm</p>
+    <p class="subtitle" data-i18n="menuSubtitle">Glide your raptor through a meteor storm</p>
     <p id="welcome-name" class="welcome-tag"></p>
     <div class="menu-buttons">
-      <button id="btn-play" class="btn btn-primary">Play</button>
-      <button id="btn-tournaments" class="btn btn-tournament">Tournaments</button>
-      <button id="btn-store" class="btn">Store</button>
-      <button id="btn-admin" class="btn btn-admin hidden">Admin</button>
+      <button id="btn-play" class="btn btn-primary" data-i18n="menuPlay">Play</button>
+      <button id="btn-tournaments" class="btn btn-tournament" data-i18n="menuTournaments">Tournaments</button>
+      <button id="btn-store" class="btn" data-i18n="menuStore">Store</button>
+      <button id="btn-admin" class="btn btn-admin hidden" data-i18n="menuAdmin">Admin</button>
     </div>
-    <p class="hint">Tap, click, or press Space to flap</p>
-    <button id="btn-logout" class="btn-link">Logout</button>
+    <p class="hint" data-i18n="menuHint">Tap, click, or press Space to flap</p>
+    <button id="btn-logout" class="btn-link" data-i18n="menuLogout">Logout</button>
   </div>
 
   <!-- Admin panel (admin only) -->
   <div id="screen-admin" class="screen hidden">
     <div class="store-header">
       <button id="btn-admin-back" class="btn btn-icon">&larr;</button>
-      <h2 class="title small">ADMIN PANEL</h2>
+      <h2 class="title small" data-i18n="adminTitle">ADMIN PANEL</h2>
       <div class="store-spacer"></div>
     </div>
     <div class="admin-tabs">
-      <button class="admin-tab active" data-tab="live">Live</button>
-      <button class="admin-tab" data-tab="upcoming">Upcoming</button>
-      <button class="admin-tab" data-tab="past">Past</button>
-      <button class="admin-tab" data-tab="players">Players</button>
+      <button class="admin-tab active" data-tab="live" data-i18n="adminLive">Live</button>
+      <button class="admin-tab" data-tab="upcoming" data-i18n="adminUpcoming">Upcoming</button>
+      <button class="admin-tab" data-tab="past" data-i18n="adminPast">Past</button>
+      <button class="admin-tab" data-tab="players" data-i18n="adminPlayers">Players</button>
     </div>
     <div id="admin-content" class="admin-content">
-      <p class="hint">Loading...</p>
+      <p class="hint" data-i18n="adminLoading">Loading...</p>
     </div>
   </div>
 
@@ -107,38 +129,38 @@
   <div id="screen-tournaments" class="screen hidden">
     <div class="store-header">
       <button id="btn-tournaments-back" class="btn btn-icon">&larr;</button>
-      <h2 class="title small">TOURNAMENTS</h2>
+      <h2 class="title small" data-i18n="tournamentsTitle">TOURNAMENTS</h2>
       <div class="store-spacer"></div>
     </div>
     <div id="tournament-list" class="tournament-list">
-      <p class="hint">Loading...</p>
+      <p class="hint" data-i18n="tournamentsLoading">Loading...</p>
     </div>
   </div>
 
   <!-- Game over screen (free play) -->
   <div id="screen-gameover" class="screen hidden">
-    <h2 class="title small">EXTINCT!</h2>
+    <h2 class="title small" data-i18n="gameoverTitle">EXTINCT!</h2>
     <div class="stat-row">
-      <div class="stat"><span class="stat-label">Score</span><span id="final-score" class="stat-value">0</span></div>
-      <div class="stat"><span class="stat-label">Best</span><span id="best-score" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label" data-i18n="gameoverScore">Score</span><span id="final-score" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label" data-i18n="gameoverBest">Best</span><span id="best-score" class="stat-value">0</span></div>
     </div>
     <div class="menu-buttons">
-      <button id="btn-retry" class="btn btn-primary">Retry</button>
-      <button id="btn-menu" class="btn">Menu</button>
+      <button id="btn-retry" class="btn btn-primary" data-i18n="gameoverRetry">Retry</button>
+      <button id="btn-menu" class="btn" data-i18n="gameoverMenu">Menu</button>
     </div>
   </div>
 
   <!-- Game over screen (tournament) -->
   <div id="screen-tournament-over" class="screen hidden">
-    <h2 class="title small">EXTINCT!</h2>
+    <h2 class="title small" data-i18n="gameoverTitle">EXTINCT!</h2>
     <div class="stat-row">
-      <div class="stat"><span class="stat-label">Score</span><span id="t-final-score" class="stat-value">0</span></div>
-      <div class="stat"><span class="stat-label">Rank</span><span id="t-rank" class="stat-value">-</span></div>
+      <div class="stat"><span class="stat-label" data-i18n="gameoverScore">Score</span><span id="t-final-score" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label" data-i18n="gameoverRank">Rank</span><span id="t-rank" class="stat-value">-</span></div>
     </div>
-    <p id="t-submit-status" class="hint">Submitting score...</p>
+    <p id="t-submit-status" class="hint" data-i18n="gameoverSubmitting">Submitting score...</p>
     <div class="menu-buttons">
-      <button id="btn-t-retry" class="btn btn-primary">Play Again</button>
-      <button id="btn-t-menu" class="btn">Menu</button>
+      <button id="btn-t-retry" class="btn btn-primary" data-i18n="gameoverPlayAgain">Play Again</button>
+      <button id="btn-t-menu" class="btn" data-i18n="gameoverMenu">Menu</button>
     </div>
   </div>
 
@@ -146,10 +168,10 @@
   <div id="screen-store" class="screen hidden">
     <div class="store-header">
       <button id="btn-store-back" class="btn btn-icon">&larr;</button>
-      <h2 class="title small">DINO STORE</h2>
+      <h2 class="title small" data-i18n="storeTitle">DINO STORE</h2>
       <div class="store-spacer"></div>
     </div>
-    <p class="store-note">Skins are cosmetic only &mdash; every dino plays exactly the same.</p>
+    <p class="store-note" data-i18n="storeNote">Skins are cosmetic only — every dino plays exactly the same.</p>
     <div id="store-grid" class="store-grid"></div>
   </div>
 
@@ -159,13 +181,14 @@
       <h3 id="modal-buy-title">Buy character</h3>
       <p id="modal-buy-desc"></p>
       <div class="menu-buttons">
-        <button id="btn-buy-confirm" class="btn btn-primary">Confirm purchase</button>
-        <button id="btn-buy-cancel" class="btn">Cancel</button>
+        <button id="btn-buy-confirm" class="btn btn-primary" data-i18n="buyConfirm">Confirm purchase</button>
+        <button id="btn-buy-cancel" class="btn" data-i18n="buyCancel">Cancel</button>
       </div>
     </div>
   </div>
 </div>
 
+<script src="js/i18n.js"></script>
 <script src="js/characters.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/orbit.js"></script>
