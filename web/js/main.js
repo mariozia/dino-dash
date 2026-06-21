@@ -197,6 +197,8 @@
   document.getElementById("btn-forgot-back").onclick = () => showScreen("login");
 
   // ── Main menu ──
+  var btnAdmin = document.getElementById("btn-admin");
+
   function goMenu() {
     game.goIdle();
     hud.classList.add("hidden");
@@ -205,9 +207,89 @@
     if (session) {
       document.getElementById("welcome-name").textContent =
         "Welcome, " + (session.name || session.email);
+      if (session.admin) {
+        btnAdmin.classList.remove("hidden");
+      } else {
+        btnAdmin.classList.add("hidden");
+      }
       showScreen("start");
     } else {
       showScreen("login");
+    }
+  }
+
+  // ── Admin panel ──
+  var adminTab = "live";
+
+  function openAdmin() {
+    showScreen("admin");
+    loadAdminTab(adminTab);
+  }
+
+  document.querySelectorAll(".admin-tab").forEach(function(tab) {
+    tab.addEventListener("click", function() {
+      document.querySelectorAll(".admin-tab").forEach(function(t) { t.classList.remove("active"); });
+      tab.classList.add("active");
+      adminTab = tab.getAttribute("data-tab");
+      loadAdminTab(adminTab);
+    });
+  });
+
+  async function loadAdminTab(tab) {
+    var content = document.getElementById("admin-content");
+    content.innerHTML = '<p class="hint">Loading...</p>';
+    try {
+      if (tab === "players") {
+        var players = await getAdminPlayers();
+        if (!players || !players.length) {
+          content.innerHTML = '<p class="admin-empty">No players yet</p>';
+          return;
+        }
+        content.innerHTML = "";
+        players.forEach(function(p) {
+          var row = document.createElement("div");
+          row.className = "admin-player-row";
+          row.innerHTML =
+            '<div>' +
+              '<div class="admin-player-email">' + (p.display_name || "Player") + '</div>' +
+              '<div class="admin-player-info">' + p.email + '</div>' +
+            '</div>' +
+            '<div>' +
+              '<div class="admin-player-info">High: ' + (p.high_score || 0) + '</div>' +
+              '<div class="admin-player-info">Games: ' + (p.games_played || 0) + '</div>' +
+            '</div>';
+          content.appendChild(row);
+        });
+      } else {
+        var tournaments = await getAdminTournaments(tab);
+        if (!tournaments || !tournaments.length) {
+          content.innerHTML = '<p class="admin-empty">No ' + tab + ' tournaments</p>';
+          return;
+        }
+        content.innerHTML = "";
+        tournaments.forEach(function(t) {
+          var card = document.createElement("div");
+          card.className = "admin-card";
+          var badgeClass = tab === "live" ? "badge-live" : tab === "upcoming" ? "badge-upcoming" : "badge-ended";
+          var badgeText = tab === "live" ? "LIVE" : tab === "upcoming" ? "UPCOMING" : "ENDED";
+          var prizes = t.prize_pool
+            ? Object.entries(t.prize_pool).map(function(e) { return e[0] + ": " + e[1] + " ⭐"; }).join(" | ")
+            : "";
+          card.innerHTML =
+            '<div class="admin-card-header">' +
+              '<span class="admin-card-name">' + t.name + '</span>' +
+              '<span class="admin-card-badge ' + badgeClass + '">' + badgeText + '</span>' +
+            '</div>' +
+            '<div class="admin-card-detail">Starts: ' + new Date(t.starts_at).toLocaleString() + '</div>' +
+            '<div class="admin-card-detail">Ends: ' + new Date(t.ends_at).toLocaleString() + '</div>' +
+            '<div class="admin-card-detail">Participants: ' + (t.max_participants || "—") + '</div>' +
+            (t.invite_code ? '<div class="admin-card-detail">Code: ' + t.invite_code + '</div>' : '') +
+            (prizes ? '<div class="admin-card-prizes">' + prizes + '</div>' : '');
+          content.appendChild(card);
+        });
+      }
+    } catch (e) {
+      content.innerHTML = '<p class="error-text">Failed to load data</p>';
     }
   }
 
@@ -313,6 +395,8 @@
   }
 
   // ── Button bindings ──
+  document.getElementById("btn-admin").onclick = openAdmin;
+  document.getElementById("btn-admin-back").onclick = goMenu;
   document.getElementById("btn-play").onclick = function() { startGame(null); };
   document.getElementById("btn-retry").onclick = function() { startGame(null); };
   document.getElementById("btn-menu").onclick = goMenu;

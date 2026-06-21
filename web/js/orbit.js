@@ -67,6 +67,32 @@ async function getTournaments() {
   return data.tournaments || [];
 }
 
+async function getAdminTournaments(status) {
+  var supabaseUrl = 'https://eqjsmfegpwuakpsepryj.supabase.co';
+  var now = new Date().toISOString();
+  var url = supabaseUrl + '/rest/v1/tournaments?game=eq.dino&select=*&order=starts_at.desc';
+  if (status === 'live') {
+    url += '&starts_at=lte.' + now + '&ends_at=gte.' + now;
+  } else if (status === 'upcoming') {
+    url += '&starts_at=gt.' + now;
+    url = url.replace('starts_at.desc', 'starts_at.asc');
+  } else if (status === 'past') {
+    url += '&ends_at=lt.' + now;
+  }
+  var res = await fetch(url, {
+    headers: { 'apikey': ORBIT_ANON_KEY, 'Authorization': 'Bearer ' + ORBIT_ANON_KEY },
+  });
+  return res.json();
+}
+
+async function getAdminPlayers() {
+  var supabaseUrl = 'https://eqjsmfegpwuakpsepryj.supabase.co';
+  var res = await fetch(supabaseUrl + '/rest/v1/dino_game_profiles?select=*&order=updated_at.desc', {
+    headers: { 'apikey': ORBIT_ANON_KEY, 'Authorization': 'Bearer ' + ORBIT_ANON_KEY },
+  });
+  return res.json();
+}
+
 async function submitScore(email, tournamentId, score) {
   const res = await fetch(`${ORBIT_URL}/dino-submit-score`, {
     method: 'POST',

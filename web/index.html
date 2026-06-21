@@ -73,14 +73,34 @@
   <!-- Start screen (main menu) -->
   <div id="screen-start" class="screen hidden">
     <h1 class="title">DINO DASH</h1>
-    <p id="welcome-name" class="subtitle"></p>
+    <p class="subtitle">Glide your raptor through a meteor storm</p>
+    <p id="welcome-name" class="welcome-tag"></p>
     <div class="menu-buttons">
       <button id="btn-play" class="btn btn-primary">Play</button>
       <button id="btn-tournaments" class="btn btn-tournament">Tournaments</button>
       <button id="btn-store" class="btn">Store</button>
+      <button id="btn-admin" class="btn btn-admin hidden">Admin</button>
     </div>
     <p class="hint">Tap, click, or press Space to flap</p>
     <button id="btn-logout" class="btn-link">Logout</button>
+  </div>
+
+  <!-- Admin panel (admin only) -->
+  <div id="screen-admin" class="screen hidden">
+    <div class="store-header">
+      <button id="btn-admin-back" class="btn btn-icon">&larr;</button>
+      <h2 class="title small">ADMIN PANEL</h2>
+      <div class="store-spacer"></div>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="live">Live</button>
+      <button class="admin-tab" data-tab="upcoming">Upcoming</button>
+      <button class="admin-tab" data-tab="past">Past</button>
+      <button class="admin-tab" data-tab="players">Players</button>
+    </div>
+    <div id="admin-content" class="admin-content">
+      <p class="hint">Loading...</p>
+    </div>
   </div>
 
   <!-- Tournaments screen -->
