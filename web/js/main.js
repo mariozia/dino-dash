@@ -310,6 +310,20 @@
     if (e.code === "Space") flapInput(e);
   });
 
+  // ── Password visibility toggles ──
+  document.querySelectorAll(".btn-eye").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var input = document.getElementById(btn.getAttribute("data-target"));
+      if (input.type === "password") {
+        input.type = "text";
+        btn.classList.add("active");
+      } else {
+        input.type = "password";
+        btn.classList.remove("active");
+      }
+    });
+  });
+
   // ── Init ──
   if (session) {
     goMenu();

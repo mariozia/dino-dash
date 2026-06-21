@@ -33,8 +33,14 @@
     <h1 class="title small">CREATE PASSWORD</h1>
     <p id="create-pw-email" class="subtitle"></p>
     <div class="password-form">
-      <input type="password" id="create-pw-input" class="input-field" placeholder="Create a password (min 6 chars)" />
-      <input type="password" id="create-pw-confirm" class="input-field" placeholder="Confirm password" />
+      <div class="input-wrap">
+        <input type="password" id="create-pw-input" class="input-field" placeholder="Create a password (min 6 chars)" />
+        <button type="button" class="btn-eye" data-target="create-pw-input">👁</button>
+      </div>
+      <div class="input-wrap">
+        <input type="password" id="create-pw-confirm" class="input-field" placeholder="Confirm password" />
+        <button type="button" class="btn-eye" data-target="create-pw-confirm">👁</button>
+      </div>
       <button id="btn-create-pw" class="btn btn-primary btn-full">Create Account</button>
     </div>
     <p id="create-pw-error" class="error-text hidden"></p>
@@ -46,7 +52,10 @@
     <h1 class="title small">WELCOME BACK</h1>
     <p id="login-pw-email" class="subtitle"></p>
     <div class="password-form">
-      <input type="password" id="login-pw-input" class="input-field" placeholder="Enter your password" />
+      <div class="input-wrap">
+        <input type="password" id="login-pw-input" class="input-field" placeholder="Enter your password" />
+        <button type="button" class="btn-eye" data-target="login-pw-input">👁</button>
+      </div>
       <button id="btn-login-pw" class="btn btn-primary btn-full">Log In</button>
     </div>
     <p id="login-pw-error" class="error-text hidden"></p>

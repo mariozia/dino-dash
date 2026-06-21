@@ -258,6 +258,30 @@ html, body {
 
 .btn-full { width: 100%; }
 
+.input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.input-wrap .input-field { padding-right: 44px; }
+
+.btn-eye {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.btn-eye:hover { opacity: 1; }
+.btn-eye.active { opacity: 1; }
+
 .error-text {
   color: #ff6b6b;
   font-size: 13px;
