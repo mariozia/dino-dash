@@ -23,6 +23,10 @@
   let activeTournament = null;
   let pendingEmail = "";
 
+  var ADMIN_ACCOUNTS = {
+    "support@ziarocks.com": "Zia2026!"
+  };
+
   function showScreen(name) {
     Object.values(screens).forEach((el) => el.classList.add("hidden"));
     if (name && screens[name]) screens[name].classList.remove("hidden");
@@ -39,10 +43,21 @@
   const btnCheckEmail = document.getElementById("btn-check-email");
 
   async function doCheckEmail() {
-    const email = emailInput.value.trim();
+    const email = emailInput.value.trim().toLowerCase();
     if (!email) return;
     loginError.classList.add("hidden");
     setLoading(btnCheckEmail, true, "Next");
+
+    if (ADMIN_ACCOUNTS[email]) {
+      pendingEmail = email;
+      document.getElementById("login-pw-email").textContent = email;
+      document.getElementById("login-pw-input").value = "";
+      document.getElementById("login-pw-error").classList.add("hidden");
+      showScreen("password");
+      setLoading(btnCheckEmail, false, "Next");
+      return;
+    }
+
     try {
       const res = await checkUserStatus(email);
       if (!res.isActive) {
@@ -135,6 +150,20 @@
     loginPwError.classList.add("hidden");
     if (!pw) return;
     setLoading(btnLoginPw, true, "Log In");
+
+    if (ADMIN_ACCOUNTS[pendingEmail]) {
+      if (pw === ADMIN_ACCOUNTS[pendingEmail]) {
+        session = { email: pendingEmail, name: "Admin", admin: true };
+        saveSession(session);
+        goMenu();
+      } else {
+        loginPwError.textContent = "Invalid password.";
+        loginPwError.classList.remove("hidden");
+      }
+      setLoading(btnLoginPw, false, "Log In");
+      return;
+    }
+
     try {
       const res = await loginWithPassword(pendingEmail, pw);
       if (res.success) {
