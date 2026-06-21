@@ -407,19 +407,25 @@
         var timeLabel = isActive
           ? t("tournamentsEnds") + ": " + new Date(tr.ends_at).toLocaleString()
           : t("tournamentsStarts") + ": " + new Date(tr.starts_at).toLocaleString();
-        var prizes = tr.prize_pool
-          ? Object.entries(tr.prize_pool).map(function(e) { return e[0] + ": " + e[1] + " ⭐"; }).join(" | ")
-          : "";
+        var prizesHtml = "";
+        if (tr.prize_pool) {
+          var entries = Object.entries(tr.prize_pool);
+          if (entries.length <= 3) {
+            prizesHtml = entries.map(function(e) { return e[0] + ": " + e[1] + " ⭐"; }).join(" | ");
+          } else {
+            prizesHtml = "🏆 " + entries.length + " winners — " + entries[0][1] + " ⭐ each";
+          }
+        }
         card.innerHTML =
           (tr.banner_url ? '<img class="t-card-banner" src="' + tr.banner_url + '" alt="" />' : '') +
           '<div class="t-card-header">' +
             '<span class="t-card-name">' + tr.name + '</span>' +
             '<span class="t-card-status ' + statusClass + '">' + statusText + '</span>' +
           '</div>' +
-          (prizes ? '<div class="t-card-prizes">' + prizes + '</div>' : '') +
+          (prizesHtml ? '<div class="t-card-prizes">' + prizesHtml + '</div>' : '') +
           '<div class="t-card-time">' + timeLabel + '</div>' +
-          '<div class="t-leaderboard" id="lb-' + tr.id + '"></div>' +
-          (isActive ? '<button class="btn btn-primary t-enter-btn">' + t("tournamentsPlay") + '</button>' : '');
+          (isActive ? '<button class="btn btn-primary t-enter-btn">' + t("tournamentsPlay") + '</button>' : '') +
+          '<div class="t-leaderboard" id="lb-' + tr.id + '"></div>';
         if (isActive) {
           card.querySelector(".t-enter-btn").onclick = function() {
             if (tr.invite_code) {
