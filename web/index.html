@@ -13,20 +13,47 @@
   <!-- HUD shown during play -->
   <div id="hud" class="hidden">
     <div id="score">0</div>
+    <div id="hud-tournament" class="hidden"></div>
+  </div>
+
+  <!-- Login screen -->
+  <div id="screen-login" class="screen">
+    <h1 class="title">DINO DASH</h1>
+    <p class="subtitle">Enter your ZiaRocks email to play</p>
+    <div class="login-form">
+      <input type="email" id="login-email" class="input-email" placeholder="you@email.com" autocomplete="email" />
+      <button id="btn-login" class="btn btn-primary">Enter</button>
+    </div>
+    <p id="login-error" class="error-text hidden"></p>
+    <p class="hint">You need an active ZiaRocks subscription</p>
   </div>
 
   <!-- Start screen -->
-  <div id="screen-start" class="screen">
+  <div id="screen-start" class="screen hidden">
     <h1 class="title">DINO DASH</h1>
-    <p class="subtitle">Glide your raptor through a meteor storm</p>
+    <p id="welcome-name" class="subtitle"></p>
     <div class="menu-buttons">
       <button id="btn-play" class="btn btn-primary">Play</button>
+      <button id="btn-tournaments" class="btn btn-tournament">Tournaments</button>
       <button id="btn-store" class="btn">Store</button>
     </div>
     <p class="hint">Tap, click, or press Space to flap</p>
+    <button id="btn-logout" class="btn-link">Logout</button>
   </div>
 
-  <!-- Game over screen -->
+  <!-- Tournaments screen -->
+  <div id="screen-tournaments" class="screen hidden">
+    <div class="store-header">
+      <button id="btn-tournaments-back" class="btn btn-icon">&larr;</button>
+      <h2 class="title small">TOURNAMENTS</h2>
+      <div class="store-spacer"></div>
+    </div>
+    <div id="tournament-list" class="tournament-list">
+      <p class="hint">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Game over screen (free play) -->
   <div id="screen-gameover" class="screen hidden">
     <h2 class="title small">EXTINCT!</h2>
     <div class="stat-row">
@@ -39,6 +66,20 @@
     </div>
   </div>
 
+  <!-- Game over screen (tournament) -->
+  <div id="screen-tournament-over" class="screen hidden">
+    <h2 class="title small">EXTINCT!</h2>
+    <div class="stat-row">
+      <div class="stat"><span class="stat-label">Score</span><span id="t-final-score" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">Rank</span><span id="t-rank" class="stat-value">-</span></div>
+    </div>
+    <p id="t-submit-status" class="hint">Submitting score...</p>
+    <div class="menu-buttons">
+      <button id="btn-t-retry" class="btn btn-primary">Play Again</button>
+      <button id="btn-t-menu" class="btn">Menu</button>
+    </div>
+  </div>
+
   <!-- Store screen -->
   <div id="screen-store" class="screen hidden">
     <div class="store-header">
@@ -46,7 +87,7 @@
       <h2 class="title small">DINO STORE</h2>
       <div class="store-spacer"></div>
     </div>
-    <p class="store-note">Skins are cosmetic only &mdash; every dino plays exactly the same. Purchases here are a local demo, no real payment is processed.</p>
+    <p class="store-note">Skins are cosmetic only &mdash; every dino plays exactly the same.</p>
     <div id="store-grid" class="store-grid"></div>
   </div>
 
@@ -65,6 +106,7 @@
 
 <script src="js/characters.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/orbit.js"></script>
 <script src="js/art.js"></script>
 <script src="js/entities.js"></script>
 <script src="js/game.js"></script>
