@@ -411,6 +411,7 @@
           ? Object.entries(tr.prize_pool).map(function(e) { return e[0] + ": " + e[1] + " ⭐"; }).join(" | ")
           : "";
         card.innerHTML =
+          (tr.banner_url ? '<img class="t-card-banner" src="' + tr.banner_url + '" alt="" />' : '') +
           '<div class="t-card-header">' +
             '<span class="t-card-name">' + tr.name + '</span>' +
             '<span class="t-card-status ' + statusClass + '">' + statusText + '</span>' +
