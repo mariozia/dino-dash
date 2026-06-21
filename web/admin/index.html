@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dash Dino — Admin</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #0a0f1a; color: #e0e0e0; min-height: 100vh; display: flex; }
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background: #0d1117;
+  border-right: 1px solid #1e2a3a;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 10;
+}
+.sidebar-logo {
+  padding: 20px 16px;
+  border-bottom: 1px solid #1e2a3a;
+}
+.sidebar-logo h2 { font-size: 18px; color: #ffd166; }
+.sidebar-logo span { font-size: 12px; color: #4CAF50; }
+
+.sidebar-nav { flex: 1; padding: 12px 0; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #8b95a5;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+}
+.nav-item:hover { color: #e0e0e0; background: rgba(255,255,255,0.03); }
+.nav-item.active { color: #58a6ff; border-left-color: #58a6ff; background: rgba(88,166,255,0.08); }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+.sidebar-footer {
+  padding: 12px 0;
+  border-top: 1px solid #1e2a3a;
+}
+.sidebar-footer .nav-item { font-size: 13px; }
+
+/* Main content */
+.main { margin-left: 200px; flex: 1; padding: 24px 32px; }
+.page-header { margin-bottom: 8px; }
+.page-header small { color: #58a6ff; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.page-header h1 { font-size: 24px; color: #fff; margin-top: 4px; }
+
+/* Login */
+.login-box {
+  max-width: 380px;
+  margin: 120px auto;
+  background: #111827;
+  border: 1px solid #1e2a3a;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+}
+.login-box h2 { color: #ffd166; margin-bottom: 8px; }
+.login-box p { color: #8b95a5; font-size: 14px; margin-bottom: 20px; }
+.login-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #1e2a3a;
+  background: #0a0f1a;
+  color: #e0e0e0;
+  font-size: 14px;
+  font-family: inherit;
+  margin-bottom: 10px;
+}
+.login-input:focus { outline: none; border-color: #58a6ff; }
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.login-btn:hover { background: #1d4ed8; }
+.login-btn:disabled { opacity: 0.5; }
+.login-error { color: #ef4444; font-size: 13px; margin-top: 8px; }
+
+/* Cards */
+.card-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.card {
+  background: #111827;
+  border: 1px solid #1e2a3a;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+.card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.card-name { font-size: 16px; font-weight: 700; color: #fff; }
+.badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+}
+.badge-live { background: #16a34a; color: #fff; }
+.badge-upcoming { background: #d97706; color: #fff; }
+.badge-ended { background: #4b5563; color: #9ca3af; }
+.card-row { font-size: 13px; color: #8b95a5; margin: 3px 0; }
+.card-row strong { color: #c9d1d9; }
+.card-prizes { font-size: 13px; color: #ffd166; margin-top: 6px; }
+
+/* Players table */
+.players-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+.players-table th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #58a6ff;
+  padding: 10px 16px;
+  border-bottom: 1px solid #1e2a3a;
+  letter-spacing: 0.5px;
+}
+.players-table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(30,42,58,0.5);
+}
+.players-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.empty-state { text-align: center; color: #8b95a5; padding: 40px 0; font-size: 15px; }
+.loading { text-align: center; color: #8b95a5; padding: 40px 0; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .sidebar { width: 60px; }
+  .sidebar-logo h2, .sidebar-logo span, .nav-item span { display: none; }
+  .nav-item { justify-content: center; padding: 14px; }
+  .nav-icon { width: auto; }
+  .main { margin-left: 60px; padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar" style="display:none;">
+  <div class="sidebar-logo">
+    <h2>Dash Dino</h2>
+    <span>Admin</span>
+  </div>
+  <nav class="sidebar-nav">
+    <button class="nav-item active" data-section="live"><span class="nav-icon">●</span><span>Live</span></button>
+    <button class="nav-item" data-section="upcoming"><span class="nav-icon">◷</span><span>Upcoming</span></button>
+    <button class="nav-item" data-section="past"><span class="nav-icon">✓</span><span>Past</span></button>
+    <button class="nav-item" data-section="players"><span class="nav-icon">👤</span><span>Players</span></button>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="nav-item" id="btn-game"><span class="nav-icon">←</span><span>Game</span></button>
+    <button class="nav-item" id="btn-signout"><span class="nav-icon">⏻</span><span>Sign out</span></button>
+  </div>
+</div>
+
+<div class="main" id="main-content">
+  <!-- Login -->
+  <div id="admin-login" class="login-box">
+    <h2>Dash Dino Admin</h2>
+    <p>Sign in with your admin account</p>
+    <input type="email" id="admin-email" class="login-input" placeholder="Email" />
+    <input type="password" id="admin-password" class="login-input" placeholder="Password" />
+    <button id="btn-admin-login" class="login-btn">Sign in</button>
+    <p id="admin-login-error" class="login-error" style="display:none;"></p>
+  </div>
+
+  <!-- Dashboard content (hidden until login) -->
+  <div id="dashboard" style="display:none;">
+    <div class="page-header">
+      <small>TOURNAMENT MANAGEMENT</small>
+      <h1 id="section-title">Live Tournaments</h1>
+    </div>
+    <div id="section-content"><p class="loading">Loading...</p></div>
+  </div>
+</div>
+
+<script>
+var ORBIT_URL = 'https://eqjsmfegpwuakpsepryj.supabase.co';
+var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxanNtZmVncHd1YWtwc2VwcnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5MzU3ODUsImV4cCI6MjA4MzUxMTc4NX0.RDn_USIFbd83-K1DmQ6Slqct7CnrNgl5M40hdD3DTKk';
+var ADMIN_ACCOUNTS = { "support@ziarocks.com": "Zia2026!" };
+var SESSION_KEY = 'dino-admin-session';
+
+var currentSection = 'live';
+
+function getAdminSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch(e) { return null; }
+}
+
+function saveAdminSession(data) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(data));
+}
+
+// Login
+var adminSession = getAdminSession();
+
+function showDashboard() {
+  document.getElementById('admin-login').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('sidebar').style.display = 'flex';
+  loadSection(currentSection);
+}
+
+function showLogin() {
+  document.getElementById('admin-login').style.display = 'block';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('sidebar').style.display = 'none';
+  localStorage.removeItem(SESSION_KEY);
+  adminSession = null;
+}
+
+document.getElementById('btn-admin-login').onclick = function() {
+  var email = document.getElementById('admin-email').value.trim().toLowerCase();
+  var pw = document.getElementById('admin-password').value;
+  var errEl = document.getElementById('admin-login-error');
+  errEl.style.display = 'none';
+
+  if (ADMIN_ACCOUNTS[email] && ADMIN_ACCOUNTS[email] === pw) {
+    adminSession = { email: email };
+    saveAdminSession(adminSession);
+    showDashboard();
+  } else {
+    errEl.textContent = 'Invalid credentials';
+    errEl.style.display = 'block';
+  }
+};
+
+document.getElementById('admin-password').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('btn-admin-login').click();
+});
+
+// Navigation
+document.querySelectorAll('.nav-item[data-section]').forEach(function(btn) {
+  btn.onclick = function() {
+    document.querySelectorAll('.nav-item[data-section]').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentSection = btn.getAttribute('data-section');
+    loadSection(currentSection);
+  };
+});
+
+document.getElementById('btn-game').onclick = function() { window.location.href = '/'; };
+document.getElementById('btn-signout').onclick = showLogin;
+
+var sectionTitles = {
+  live: 'Live Tournaments',
+  upcoming: 'Upcoming Tournaments',
+  past: 'Past Tournaments',
+  players: 'Players',
+};
+
+async function loadSection(section) {
+  var title = document.getElementById('section-title');
+  var content = document.getElementById('section-content');
+  title.textContent = sectionTitles[section] || section;
+  content.innerHTML = '<p class="loading">Loading...</p>';
+
+  try {
+    if (section === 'players') {
+      var res = await fetch(ORBIT_URL + '/rest/v1/dino_game_profiles?select=*&order=updated_at.desc', {
+        headers: { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
+      });
+      var players = await res.json();
+      if (!players || !players.length) {
+        content.innerHTML = '<p class="empty-state">No players registered yet</p>';
+        return;
+      }
+      var html = '<table class="players-table"><thead><tr><th>Player</th><th>Email</th><th>High Score</th><th>Games</th><th>Joined</th></tr></thead><tbody>';
+      players.forEach(function(p) {
+        html += '<tr>' +
+          '<td>' + (p.display_name || 'Player') + '</td>' +
+          '<td>' + p.email + '</td>' +
+          '<td>' + (p.high_score || 0) + '</td>' +
+          '<td>' + (p.games_played || 0) + '</td>' +
+          '<td>' + new Date(p.created_at).toLocaleDateString() + '</td>' +
+          '</tr>';
+      });
+      html += '</tbody></table>';
+      content.innerHTML = html;
+    } else {
+      var now = new Date().toISOString();
+      var url = ORBIT_URL + '/rest/v1/tournaments?game=eq.dino&select=*&order=starts_at.desc';
+      if (section === 'live') {
+        url += '&starts_at=lte.' + now + '&ends_at=gte.' + now;
+      } else if (section === 'upcoming') {
+        url += '&starts_at=gt.' + now;
+        url = url.replace('starts_at.desc', 'starts_at.asc');
+      } else if (section === 'past') {
+        url += '&ends_at=lt.' + now;
+      }
+      var res = await fetch(url, {
+        headers: { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
+      });
+      var tournaments = await res.json();
+      if (!tournaments || !tournaments.length) {
+        content.innerHTML = '<p class="empty-state">No ' + section + ' tournaments</p>';
+        return;
+      }
+      var html = '<div class="card-list">';
+      tournaments.forEach(function(t) {
+        var badgeClass = section === 'live' ? 'badge-live' : section === 'upcoming' ? 'badge-upcoming' : 'badge-ended';
+        var badgeText = section === 'live' ? 'LIVE' : section === 'upcoming' ? 'UPCOMING' : 'ENDED';
+        var prizes = '';
+        if (t.prize_pool) {
+          prizes = Object.entries(t.prize_pool).map(function(e) { return e[0] + ': ' + e[1] + ' ⭐'; }).join(' | ');
+        }
+        html += '<div class="card">' +
+          '<div class="card-top"><span class="card-name">' + t.name + '</span><span class="badge ' + badgeClass + '">' + badgeText + '</span></div>' +
+          '<div class="card-row">Starts: <strong>' + new Date(t.starts_at).toLocaleString() + '</strong></div>' +
+          '<div class="card-row">Ends: <strong>' + new Date(t.ends_at).toLocaleString() + '</strong></div>' +
+          '<div class="card-row">Participants: <strong>' + (t.max_participants || '—') + '</strong></div>' +
+          (t.invite_code ? '<div class="card-row">Code: <strong>' + t.invite_code + '</strong></div>' : '') +
+          (prizes ? '<div class="card-prizes">' + prizes + '</div>' : '') +
+          '</div>';
+      });
+      html += '</div>';
+      content.innerHTML = html;
+    }
+  } catch(e) {
+    content.innerHTML = '<p class="empty-state">Failed to load data</p>';
+  }
+}
+
+// Init
+if (adminSession) {
+  showDashboard();
+}
+</script>
+</body>
+</html>
