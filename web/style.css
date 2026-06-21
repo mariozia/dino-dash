@@ -413,6 +413,7 @@ html, body {
   flex-direction: column;
   gap: 6px;
   overflow: hidden;
+  touch-action: pan-y;
 }
 
 .t-card-banner {
@@ -468,6 +469,7 @@ html, body {
   margin-top: 8px;
   border-top: 1px solid rgba(76,175,80,0.2);
   padding-top: 8px;
+  touch-action: pan-y;
 }
 
 .t-lb-title {
@@ -527,6 +529,7 @@ html, body {
   justify-content: flex-start;
   padding-top: 18px;
   overflow-y: auto;
+  touch-action: pan-y;
 }
 
 .welcome-tag {
