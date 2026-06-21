@@ -419,7 +419,17 @@
           '<div class="t-card-time">' + timeLabel + '</div>' +
           (isActive ? '<button class="btn btn-primary t-enter-btn">' + t("tournamentsPlay") + '</button>' : '');
         if (isActive) {
-          card.querySelector(".t-enter-btn").onclick = function() { startGame(tr); };
+          card.querySelector(".t-enter-btn").onclick = function() {
+            if (tr.invite_code) {
+              var code = prompt(t("tournamentsEnterCode") || "Enter invite code:");
+              if (!code) return;
+              if (code.trim().toUpperCase() !== tr.invite_code.trim().toUpperCase()) {
+                alert(t("tournamentsWrongCode") || "Invalid invite code");
+                return;
+              }
+            }
+            startGame(tr);
+          };
         }
         list.appendChild(card);
       });
